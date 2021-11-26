@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react'
+import { softShadows, OrbitControls } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber'
+import Lights from './components/Lights';
+import Environment from './components/Environment';
+import Model from './components/Model';
+import Ground from './components/Ground';
 
-function App() {
+// Inject soft shadow shader
+softShadows()
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Suspense fallback={<span>loading...</span>}>
+        <Canvas shadows camera={{ position: [-6, 4, 10], fov: 60 }}>
+          <color attach="background" args={['#FFC0CB']} />
+          <Lights/>
+          <Environment/>
+          <Model scale={3} position={[0, 0, 0]} rotation={[0, Math.PI/180 * -120, 0]}/>
+          {/*Reflector*/}
+          <Ground />
+          {/*shadow plane*/}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.75, 0]} receiveShadow>
+            <planeBufferGeometry attach='geometry' args={[100, 100]} />
+            <shadowMaterial attach='material' transparent={true} opacity={0.6} />
+          </mesh>
+        </Canvas>
+      </Suspense>
   );
 }
 
